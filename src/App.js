@@ -5,8 +5,11 @@ import AuthContext from './context/Auto-Context';
 
 import Login from './pages/login';
 import Dashboard from './pages/dashboard';
+import Prediccion from './pages/prediccion';
+import Magia from './pages/magia';
 
 import './App.css';
+
 
 class App extends Component {
   state = {
@@ -37,16 +40,19 @@ class App extends Component {
             <MainNavigation />
             <main className="main-content">
               <Switch>
-                {this.state.token && <Redirect from="/" to="/historico" exact />}
+                {this.state.token && <Redirect from="/" to="/login" exact />}
                 {this.state.token && (
                   <Redirect from="/login" to="/historico" exact />
                 )}
                 {!this.state.token && (
                   <Route path="/login" component={Login} />
                 )}
-                <Route path="/historico" component={Dashboard} />
+                <Route path='/historico' component={Dashboard}/>
                 {this.state.token && (
-                  <Route path="/prediccion" component={Dashboard} />
+                    <Route path='/prediccion' component={Prediccion}/>
+                )}
+                {this.state.token && (
+                    <Route path='/magia' component={Magia}/>
                 )}
                 {!this.state.token && <Redirect to="/login" exact />}
               </Switch>

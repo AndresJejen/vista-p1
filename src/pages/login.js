@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Plot from 'react-plotly.js';
 
 import './Auth.css';
 import AuthContext from '../context/Auto-Context';
@@ -15,6 +14,7 @@ class Login extends Component {
     super(props);
     this.emailEl = React.createRef();
     this.passwordEl = React.createRef();
+    this.displayNameEl = React.createRef();
   }
 
   switchModeHandler = () => {
@@ -27,6 +27,9 @@ class Login extends Component {
     event.preventDefault();
     const email = this.emailEl.current.value;
     const password = this.passwordEl.current.value;
+    let displayName = null;
+
+    if(!this.state.isLogin) { displayName = this.displayNameEl.current.value;}
 
     if (email.trim().length === 0 || password.trim().length === 0) {
       return;
@@ -51,21 +54,23 @@ class Login extends Component {
     if (!this.state.isLogin) {
       requestBody = {
         query: `
-          mutation CreateUser($email: String!, $password: String!) {
-            createUser(userInput: {email: $email, password: $password}) {
+          mutation CreateUser($email: String!, $password: String!, $displayName: String!) {
+            createUser(userInput: {email: $email, password: $password, displayName: $displayName}) {
               _id
               email
+              displayName
             }
           }
         `,
         variables: {
           email: email,
-          password: password
+          password: password,
+          displayName: displayName
         }
       };
     }
 
-    fetch('http://localhost:8000/graphql', {
+    fetch('http://23.239.2.183:8000/api', {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
@@ -95,35 +100,22 @@ class Login extends Component {
   render() {
     return (
       <div>
-      <form className="auth-form" onSubmit={this.submitHandler}>
-        <div className="form-control">
-          <label htmlFor="email">E-Mail</label>
-          <input type="email" id="email" ref={this.emailEl} />
-        </div>
-        <div className="form-control">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" ref={this.passwordEl} />
-        </div>
-        <div className="form-actions">
-          <button type="submit">Submit</button>
-          <button type="button" onClick={this.switchModeHandler}>
+
+<form onSubmit={this.submitHandler}>
+<label>Inicia Sesión Electry</label>
+<input type="email" name="email" placeholder="Email" ref={this.emailEl} autoComplete="off" required />
+<input type="password" name="password" placeholder="Contraseña" autoComplete="off" id="password" ref={this.passwordEl} required />
+{ !this.state.isLogin &&
+    <input type="text" id="displayName" placeholder="Nombre" autoComplete="off" ref={this.displayNameEl} required />
+}
+<button type="submit">Enviar</button>
+<button type="button" onClick={this.switchModeHandler}>
             Switch to {this.state.isLogin ? 'Signup' : 'Login'}
           </button>
-        </div>
-      </form>
-      <Plot
-        data={[
-          {
-            x: [1, 2, 3,4,5,6,7,8,9],
-            y: [2, 6, 3,6,6,3,4,9,7],
-            type: 'scatter',
-            mode: 'lines+points',
-            marker: {color: 'red'},
-          }
-        ]}
-        layout={ {width: 1000, height: 500, title: 'A Fancy Plot'} }
-      />
-      </div>
+</form>
+<div className="overlay" id="overlay"></div>
+
+</div>
     );
   }
 }

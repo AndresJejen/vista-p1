@@ -6,11 +6,11 @@ import './dashboard.css';
 
 import { NavLink } from 'react-router-dom';
 
-class Dashboard extends Component{
+class Prediccion extends Component{
     constructor(props){
         super(props);
         this.state = {
-            title: "Historico",
+            title: "Predicción",
             fecha: '',
             demanda: 0,
             demandas: [],
@@ -27,7 +27,7 @@ class Dashboard extends Component{
         let requestBody = {
           query: `
             query {
-              demandassemana{
+                demandaprediccion{
                 fecha
                 demanda
               }
@@ -64,7 +64,7 @@ class Dashboard extends Component{
             return res.json();
           })
           .then(resData => {
-            let response = resData.data.demandassemana;
+            let response = resData.data.demandaprediccion;
             if (response) {
                 this.setState({fechas: [],demandas: []});
                 response.map(doc => {
@@ -121,8 +121,8 @@ class Dashboard extends Component{
                     </div>
                     <div className="sub-featured">    
                             <div className="sub1">                               
-                                    <NavLink to="/prediccion">
-                                        <h3>Prediccion siguiente semana</h3>
+                                    <NavLink to="/historico">
+                                        <h3>Historico semana</h3>
                                     </NavLink>
                             </div>
                             <div className="sub2">
@@ -141,4 +141,4 @@ class Dashboard extends Component{
     }   
 }
 
-export default Dashboard;
+export default Prediccion;
